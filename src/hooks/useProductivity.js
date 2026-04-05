@@ -28,7 +28,7 @@ export function useProductivity() {
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), 15000); // Render free tier can take up to 15s on cold start
 
-        const res = await fetch("https://chatbot-aeai.onrender.com/api/health", {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/health`, {
           signal: controller.signal,
         });
 
@@ -109,7 +109,7 @@ Give concise, actionable advice.`;
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), 30000); // Extended timeout for Render free tier
 
-      const res = await fetch("https://chatbot-aeai.onrender.com/api/chat", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/chat`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
