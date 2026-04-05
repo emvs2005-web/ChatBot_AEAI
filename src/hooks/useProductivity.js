@@ -21,14 +21,14 @@ export function useProductivity() {
 
   const nextId = useRef(100);
 
-  // ✅ FIXED: Robust server health check
+  // ✅ FIXED: Robust server health check with Render cold start support
   useEffect(() => {
     const checkServer = async () => {
       try {
         const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 3000);
+        const timeout = setTimeout(() => controller.abort(), 15000); // Render free tier can take up to 15s on cold start
 
-        const res = await fetch("http://localhost:3002/api/health", {
+        const res = await fetch("https://chatbot-aeai.onrender.com/api/health", {
           signal: controller.signal,
         });
 
@@ -107,9 +107,9 @@ Give concise, actionable advice.`;
         .map((m) => ({ role: m.role, content: m.content }));
 
       const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 10000);
+      const timeout = setTimeout(() => controller.abort(), 30000); // Extended timeout for Render free tier
 
-      const res = await fetch("http://localhost:3002/api/chat", {
+      const res = await fetch("https://chatbot-aeai.onrender.com/api/chat", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -142,9 +142,9 @@ Give concise, actionable advice.`;
 
       const msg =
         err.name === "AbortError"
-          ? "Request timed out. Try again."
+          ? "Request timed out. Server may be starting up. Try again in a few seconds."
           : err.message?.includes("Failed to fetch")
-          ? "Cannot reach backend. Run: npm run server"
+          ? "Cannot reach backend server. Please try again."
           : err.message;
 
       setMessages((prev) => [
